@@ -32,9 +32,15 @@ jobs:
             \( -name '*-sources.jar' -o -name '*-dev.jar' \) -delete
           ls -l build/libs
 
+      - name: Get jar name
+        id: jar
+        run: |
+          jar=$(basename "$(ls build/libs/*.jar | head -n1)")
+          echo "name=${jar%.jar}" >> "$GITHUB_OUTPUT"
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: mod-jars
+          name: ${{ steps.jar.outputs.name }}
           path: build/libs/*.jar
           if-no-files-found: error
